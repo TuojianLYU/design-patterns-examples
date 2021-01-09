@@ -1,32 +1,35 @@
 package src.main;
 
-import src.app.Application;
-import src.factories.GUIFactory;
-import src.factories.MacOSFactory;
-import src.factories.WindowsOSFactory;
-
-import java.util.Locale;
+import src.builders.CarBuilder;
+import src.builders.CarManualBuilder;
+import src.cars.Car;
+import src.cars.Manual;
+import src.director.Director;
 
 public class Demo {
 
-    private static Application configureApplication(){
-
-        Application app;
-        GUIFactory factory;
-        String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.contains("mac")){
-            factory = new MacOSFactory();
-            app = new Application(factory);
-        } else {
-            factory = new WindowsOSFactory();
-            app = new Application(factory);
-        }
-
-        return app;
-    }
-
     public static void main(String[] args) {
-        Application app = configureApplication();
-        app.paint();
+        Director director = new Director();
+
+        // Director gets the concrete builder object from the client
+        // (application code). That's because application knows better which
+        // builder to use to get a specific product.
+        CarBuilder builder = new CarBuilder();
+        director.constructSportsCar(builder);
+
+        // The final product is often retrieved from a builder object, since
+        // Director is not aware and not dependent on concrete builders and
+        // products.
+        Car car = builder.getResult();
+        System.out.println("Car built:\n" + car.getCarType());
+
+
+        CarManualBuilder manualBuilder = new CarManualBuilder();
+
+        // Director may know several building recipes.
+        director.constructSportsCar(manualBuilder);
+        Manual carManual = manualBuilder.getResult();
+        System.out.println("\nCar manual built:\n" + carManual.print());
     }
+
 }
