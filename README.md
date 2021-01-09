@@ -1,1 +1,1 @@
-# design-patterns-examples
+# Different examples are in related branches.
