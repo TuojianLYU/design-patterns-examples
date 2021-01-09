@@ -1,52 +1,35 @@
 package src.main;
 
-import src.shapes.Circle;
-import src.shapes.Rectangle;
-import src.shapes.Shape;
-
-import java.util.ArrayList;
-import java.util.List;
+import src.builders.CarBuilder;
+import src.builders.CarManualBuilder;
+import src.cars.Car;
+import src.cars.Manual;
+import src.director.Director;
 
 public class Demo {
+
     public static void main(String[] args) {
-        List<Shape> shapes = new ArrayList<>();
-        List<Shape> shapesCopy = new ArrayList<>();
+        Director director = new Director();
 
-        Circle circle = new Circle();
-        circle.x = 10;
-        circle.y = 20;
-        circle.radius = 15;
-        circle.color = "red";
-        shapes.add(circle);
+        // Director gets the concrete builder object from the client
+        // (application code). That's because application knows better which
+        // builder to use to get a specific product.
+        CarBuilder builder = new CarBuilder();
+        director.constructSportsCar(builder);
 
-        Circle anotherCircle = (Circle) circle.clone();
-        shapes.add(anotherCircle);
+        // The final product is often retrieved from a builder object, since
+        // Director is not aware and not dependent on concrete builders and
+        // products.
+        Car car = builder.getResult();
+        System.out.println("Car built:\n" + car.getCarType());
 
-        Rectangle rectangle = new Rectangle();
-        rectangle.width = 10;
-        rectangle.height = 20;
-        rectangle.color = "blue";
-        shapes.add(rectangle);
 
-        cloneAndCompare(shapes, shapesCopy);
+        CarManualBuilder manualBuilder = new CarManualBuilder();
+
+        // Director may know several building recipes.
+        director.constructSportsCar(manualBuilder);
+        Manual carManual = manualBuilder.getResult();
+        System.out.println("\nCar manual built:\n" + carManual.print());
     }
 
-    private static void cloneAndCompare(List<Shape> shapes, List<Shape> shapesCopy) {
-        for (Shape shape : shapes) {
-            shapesCopy.add(shape.clone());
-        }
-
-        for (int i = 0; i < shapes.size(); i++) {
-            if (shapes.get(i) != shapesCopy.get(i)) {
-                System.out.println(i + ": Shapes are different objects (yay!)");
-                if (shapes.get(i).equals(shapesCopy.get(i))) {
-                    System.out.println(i + ": And they are identical (yay!)");
-                } else {
-                    System.out.println(i + ": But they are not identical (booo!)");
-                }
-            } else {
-                System.out.println(i + ": Shape objects are the same (booo!)");
-            }
-        }
-    }
 }
