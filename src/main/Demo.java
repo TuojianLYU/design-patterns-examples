@@ -1,28 +1,32 @@
 package src.main;
 
-import src.factory.Dialog;
-import src.factory.HtmlDialog;
-import src.factory.WindowsDialog;
+import src.app.Application;
+import src.factories.GUIFactory;
+import src.factories.MacOSFactory;
+import src.factories.WindowsOSFactory;
+
+import java.util.Locale;
 
 public class Demo {
-    private static Dialog dialog;
+
+    private static Application configureApplication(){
+
+        Application app;
+        GUIFactory factory;
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.contains("mac")){
+            factory = new MacOSFactory();
+            app = new Application(factory);
+        } else {
+            factory = new WindowsOSFactory();
+            app = new Application(factory);
+        }
+
+        return app;
+    }
 
     public static void main(String[] args) {
-
-        configure();
-        runBusinessLogic();
+        Application app = configureApplication();
+        app.paint();
     }
-
-    static void configure(){
-        if (System.getProperty("os.name").equals("Windows 10")){
-            dialog = new WindowsDialog();
-        } else {
-            dialog = new HtmlDialog();
-        }
-    }
-
-    static void runBusinessLogic(){
-        dialog.renderWindow();
-    }
-
 }
